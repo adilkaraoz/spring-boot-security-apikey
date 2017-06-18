@@ -7,10 +7,31 @@
 	<groupId>com.adilkaraoz.spring</groupId>
 	<artifactId>spring-boot-security-apikey</artifactId>
 	<!-- <version>0.0.1-SNAPSHOT</version> -->
-	<version>0.1.0</version>
+	<version>0.1.0.RELEASE</version>
 
 	<name>adilkaraoz-spring-boot-security-apikey</name>
 	<url>https://github.com/adilkaraoz/spring-boot-security-apikey</url>
+	<description>This library for using spring rest APIs with ApiKeys</description>
+
+	<licenses>
+		<license>
+			<name>LMIT License</name>
+			<url>https://github.com/adilkaraoz/spring-boot-security-apikey/blob/master/LICENSE</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Adil Karaoz</name>
+			<email>adilkaraoz[@]gmail.com</email>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git@github.com:adilkaraoz/spring-boot-security-apikey.git</connection>
+		<developerConnection>scm:git:git@github.com:adilkaraoz/spring-boot-security-apikey.git</developerConnection>
+		<url>git@github.com:adilkaraoz/spring-boot-security-apikey.git</url>
+	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -40,6 +61,70 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.3</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin> -->
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.0.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.4</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<additionalparam>-Xdoclint:none</additionalparam>
+				</configuration>
+			</plugin>
+
+		</plugins>
+
+	</build>
 
 	<dependencyManagement>
 		<dependencies> <!-- The parent should provide all that -->
@@ -75,10 +160,11 @@
 		</pluginRepository>
 	</pluginRepositories>
 
-	<!-- <build> <extensions> <extension> <groupId>io.packagecloud.maven.wagon</groupId> 
-		<artifactId>maven-packagecloud-wagon</artifactId> <version>0.0.4</version> 
-		</extension> </extensions> </build> <distributionManagement> <repository> 
-		<id>packagecloud-ourchitecture</id> <url>packagecloud+https://packagecloud.io/ourchitecture/maven/ourchitecture-spring-boot-security-apikey</url> 
-		</repository> <snapshotRepository> <id>packagecloud-ourchitecture</id> <url>packagecloud+https://packagecloud.io/ourchitecture/maven/ourchitecture-spring-boot-security-apikey</url> 
-		</snapshotRepository> </distributionManagement> -->
+	<distributionManagement>
+		<repository>
+			<id>bintray-adilkaraoz-spring-mit</id>
+			<name>adilkaraoz-spring-mit</name>
+			<url>https://api.bintray.com/maven/adilkaraoz/spring-mit/spring-boot-security-apikey/;publish=1</url>
+		</repository>
+	</distributionManagement>
 </project>
