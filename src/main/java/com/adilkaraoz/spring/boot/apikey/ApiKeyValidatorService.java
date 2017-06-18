@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Scope;
 public class ApiKeyValidatorService {
 
 	private static Logger log = LoggerFactory.getLogger(ApiKeyValidatorService.class);
-	
+
 	private ApiKeyValidatorBase apiKeyValidator;
 
 	@Value("${com.adilkaraoz.spring.boot.apikey.required:Unauthorized}")
@@ -25,6 +25,7 @@ public class ApiKeyValidatorService {
 	private String unexpectedApiKeyError;
 
 	public ApiKeyValidatorService() {
+		// default constructor
 	}
 
 	public boolean isEnabled() {
@@ -45,13 +46,12 @@ public class ApiKeyValidatorService {
 
 			try {
 				if (!apiKeyValidator.validate(apiKey, requestURI)) {
-					log.warn("[ApiKeyValidatorService] Invalid API Key Macaroon: " + apiKey);
+					log.warn("[ApiKeyValidatorService] Invalid API Key: {}", new Object[] {apiKey});
 
 					return this.invalidApiKeyError;
 				}
 			} catch (Exception macaroonException) {
-				log.error("[ApiKeyValidatorService] API Key Macaroon Error (" + apiKey + "): "
-						+ macaroonException.getMessage());
+				log.error("[ApiKeyValidatorService] API Key Error ({}): {}", new Object[] {apiKey, macaroonException.getMessage()});
 
 				return this.unexpectedApiKeyError;
 			}

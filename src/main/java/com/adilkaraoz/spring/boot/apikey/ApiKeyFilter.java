@@ -1,8 +1,5 @@
 package com.adilkaraoz.spring.boot.apikey;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -14,29 +11,30 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ApiKeyFilter implements Filter {
 
 	private static Logger log = LoggerFactory.getLogger(ApiKeyFilter.class);
-	
-	private final String API_KEY_HEADER_NAME = "X-API-KEY";
+
+	private static final String API_KEY_HEADER_NAME = "X-API-KEY";
 
 	private final ApiKeyValidatorService validator;
 
-    public ApiKeyFilter(final ApiKeyValidatorService validator) {
-    	this.validator = validator;
-    }
-
-	@Override
-	public void init(final FilterConfig filterConfig) throws ServletException {
+	public ApiKeyFilter(final ApiKeyValidatorService validator) {
+		this.validator = validator;
 	}
 
 	@Override
-	public void doFilter(
-			final ServletRequest request, 
-			final ServletResponse response, 
-			final FilterChain chain)
+	public void init(final FilterConfig filterConfig) throws ServletException {
+		// not necessary for now
+	}
+
+	@Override
+	public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
-        
+
 		log.warn("[ApiKeyFilter] doFilter()");
 
 		if (!this.validator.isEnabled()) {
@@ -45,25 +43,26 @@ public class ApiKeyFilter implements Filter {
 			return;
 		}
 
-		final String apiKey = ((HttpServletRequest)request).getHeader(API_KEY_HEADER_NAME);
-		String requestURI = ((HttpServletRequest)request).getRequestURI();
-		
-		log.warn("contextPath: " + requestURI);
-		
+		final String apiKey = ((HttpServletRequest) request).getHeader(API_KEY_HEADER_NAME);
+		String requestURI = ((HttpServletRequest) request).getRequestURI();
+
+		log.warn("contextPath: {}", new Object[] {requestURI});
+
 		String apiKeyError = this.validator.validateRequestApiKey(apiKey, requestURI);
-		
+
 		if (apiKeyError == null) {
 			log.debug("[ApiKeyFilter] API Key is valid");
 			chain.doFilter(request, response);
 			return;
 		}
-		
-		HttpServletResponse httpResponse = (HttpServletResponse)response;
-		
+
+		HttpServletResponse httpResponse = (HttpServletResponse) response;
+
 		httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, apiKeyError);
 	}
 
 	@Override
 	public void destroy() {
+		// not necessary for now
 	}
 }

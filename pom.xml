@@ -7,7 +7,7 @@
 	<groupId>com.adilkaraoz.spring</groupId>
 	<artifactId>spring-boot-security-apikey</artifactId>
 	<!-- <version>0.0.1-SNAPSHOT</version> -->
-	<version>0.1.1.RELEASE</version>
+	<version>0.1.2.RELEASE</version>
 
 	<name>adilkaraoz-spring-boot-security-apikey</name>
 	<url>https://github.com/adilkaraoz/spring-boot-security-apikey</url>
