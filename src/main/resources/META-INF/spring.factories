@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=ourchitecture.boot.apikey.ApiKeyAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.adilkaraoz.spring.boot.apikey.ApiKeyAutoConfiguration

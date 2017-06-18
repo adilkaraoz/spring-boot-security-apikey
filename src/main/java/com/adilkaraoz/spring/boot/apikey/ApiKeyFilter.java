@@ -1,4 +1,4 @@
-package ourchitecture.boot.apikey;
+package com.adilkaraoz.spring.boot.apikey;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +20,9 @@ public class ApiKeyFilter implements Filter {
 	
 	private final String API_KEY_HEADER_NAME = "X-API-KEY";
 
-	private final ApiKeyValidator validator;
+	private final ApiKeyValidatorService validator;
 
-    public ApiKeyFilter(final ApiKeyValidator validator) {
+    public ApiKeyFilter(final ApiKeyValidatorService validator) {
     	this.validator = validator;
     }
 
@@ -37,17 +37,20 @@ public class ApiKeyFilter implements Filter {
 			final FilterChain chain)
 			throws IOException, ServletException {
         
-		log.debug("[ApiKeyFilter] doFilter()");
+		log.warn("[ApiKeyFilter] doFilter()");
 
 		if (!this.validator.isEnabled()) {
-			log.debug("[ApiKeyFilter] API Key is disabled");
+			log.warn("[ApiKeyFilter] API Key is disabled");
 			chain.doFilter(request, response);
 			return;
 		}
 
 		final String apiKey = ((HttpServletRequest)request).getHeader(API_KEY_HEADER_NAME);
+		String requestURI = ((HttpServletRequest)request).getRequestURI();
 		
-		String apiKeyError = this.validator.validateRequestApiKey(apiKey);
+		log.warn("contextPath: " + requestURI);
+		
+		String apiKeyError = this.validator.validateRequestApiKey(apiKey, requestURI);
 		
 		if (apiKeyError == null) {
 			log.debug("[ApiKeyFilter] API Key is valid");
