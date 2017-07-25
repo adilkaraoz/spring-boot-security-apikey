@@ -13,7 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.web.cors.CorsUtils;
 
+@Order(Ordered.LOWEST_PRECEDENCE)
 public class ApiKeyFilter implements Filter {
 
 	private static Logger log = LoggerFactory.getLogger(ApiKeyFilter.class);
@@ -32,10 +36,18 @@ public class ApiKeyFilter implements Filter {
 	}
 
 	@Override
-	public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
+	public void doFilter(final ServletRequest req, final ServletResponse res, final FilterChain chain)
 			throws IOException, ServletException {
 
+		HttpServletRequest request = (HttpServletRequest) req;
+		HttpServletResponse response = (HttpServletResponse) res;
+		
 		log.warn("[ApiKeyFilter] doFilter()");
+
+		if (CorsUtils.isPreFlightRequest(request)) {
+			chain.doFilter(request, response);
+			return;
+		}
 
 		if (!this.validator.isEnabled()) {
 			log.warn("[ApiKeyFilter] API Key is disabled");
@@ -46,7 +58,7 @@ public class ApiKeyFilter implements Filter {
 		final String apiKey = ((HttpServletRequest) request).getHeader(API_KEY_HEADER_NAME);
 		String requestURI = ((HttpServletRequest) request).getRequestURI();
 
-		log.warn("contextPath: {}", new Object[] {requestURI});
+		log.warn("contextPath: {}", new Object[] { requestURI });
 
 		String apiKeyError = this.validator.validateRequestApiKey(apiKey, requestURI);
 
