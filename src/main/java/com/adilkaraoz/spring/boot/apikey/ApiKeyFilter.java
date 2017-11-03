@@ -15,66 +15,69 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.cors.CorsUtils;
 
 @Order(Ordered.LOWEST_PRECEDENCE)
 public class ApiKeyFilter implements Filter {
 
-	private static Logger log = LoggerFactory.getLogger(ApiKeyFilter.class);
+    private static Logger log = LoggerFactory.getLogger(ApiKeyFilter.class);
 
-	private static final String API_KEY_HEADER_NAME = "X-API-KEY";
+    private static final String API_KEY_HEADER_NAME = "X-API-KEY";
 
-	private final ApiKeyValidatorService validator;
+    private final ApiKeyValidatorService validator;
 
-	public ApiKeyFilter(final ApiKeyValidatorService validator) {
-		this.validator = validator;
-	}
+    public ApiKeyFilter(final ApiKeyValidatorService validator) {
+        this.validator = validator;
+    }
 
-	@Override
-	public void init(final FilterConfig filterConfig) throws ServletException {
-		// not necessary for now
-	}
+    @Override
+    public void init(final FilterConfig filterConfig) throws ServletException {
+        // not necessary for now
+    }
 
-	@Override
-	public void doFilter(final ServletRequest req, final ServletResponse res, final FilterChain chain)
-			throws IOException, ServletException {
+    @Override
+    public void doFilter(final ServletRequest req, final ServletResponse res, final FilterChain chain)
+            throws IOException, ServletException {
 
-		HttpServletRequest request = (HttpServletRequest) req;
-		HttpServletResponse response = (HttpServletResponse) res;
-		
-		log.warn("[ApiKeyFilter] doFilter()");
+        HttpServletRequest request = (HttpServletRequest) req;
+        HttpServletResponse response = (HttpServletResponse) res;
 
-		if (CorsUtils.isPreFlightRequest(request)) {
-			chain.doFilter(request, response);
-			return;
-		}
+        log.warn("[ApiKeyFilter] doFilter()");
 
-		if (!this.validator.isEnabled()) {
-			log.warn("[ApiKeyFilter] API Key is disabled");
-			chain.doFilter(request, response);
-			return;
-		}
+        if (CorsUtils.isPreFlightRequest(request)) {
+            chain.doFilter(request, response);
+            return;
+        }
 
-		final String apiKey = ((HttpServletRequest) request).getHeader(API_KEY_HEADER_NAME);
-		String requestURI = ((HttpServletRequest) request).getRequestURI();
+        if (!this.validator.isEnabled()) {
+            log.warn("[ApiKeyFilter] API Key is disabled");
+            chain.doFilter(request, response);
+            return;
+        }
 
-		log.warn("contextPath: {}", new Object[] { requestURI });
+        final String apiKey = request.getHeader(API_KEY_HEADER_NAME);
+        String requestURI = request.getRequestURI();
+        String referrer = request.getHeader(HttpHeaders.REFERER);
 
-		String apiKeyError = this.validator.validateRequestApiKey(apiKey, requestURI);
+        log.warn("requestURI: {}", requestURI);
+        log.warn("Referrer: {}", referrer);
 
-		if (apiKeyError == null) {
-			log.debug("[ApiKeyFilter] API Key is valid");
-			chain.doFilter(request, response);
-			return;
-		}
+        String apiKeyError = this.validator.validateRequestApiKey(apiKey, requestURI, referrer);
 
-		HttpServletResponse httpResponse = (HttpServletResponse) response;
+        if (apiKeyError == null) {
+            log.debug("[ApiKeyFilter] API Key is valid");
+            chain.doFilter(request, response);
+            return;
+        }
 
-		httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, apiKeyError);
-	}
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-	@Override
-	public void destroy() {
-		// not necessary for now
-	}
+        httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, apiKeyError);
+    }
+
+    @Override
+    public void destroy() {
+        // not necessary for now
+    }
 }

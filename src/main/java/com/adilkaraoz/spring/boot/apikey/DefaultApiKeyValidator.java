@@ -9,34 +9,38 @@ import org.springframework.context.annotation.Scope;
 @Scope(value = BeanDefinition.SCOPE_SINGLETON)
 public class DefaultApiKeyValidator implements ApiKeyValidatorBase {
 
-	private boolean enabled = true;
+    private boolean enabled = true;
 
-	private List<String> apiKeyList = new ArrayList<>();
+    private List<String> apiKeyList = new ArrayList<>();
 
-	@Override
-	public boolean validate(String apiKey, String requestURI) {
-		// default api key validator accept all requestURI
-		return apiKeyList.contains(apiKey);
-	}
+    /**
+     * Default validate method which accepts all requestURIs and referrers if
+     * API KEY is permitted
+     */
+    @Override
+    public boolean validate(String apiKey, String requestURI, String referrer) {
+        // default api key validator accept all requestURI and referrer
+        return apiKeyList.contains(apiKey);
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return this.enabled;
-	}
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
+    }
 
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
-	public void addApiKey(String apiKey) {
-		if (!apiKeyList.contains(apiKey)) {
-			apiKeyList.add(apiKey);
-		}
-	}
+    public void addApiKey(String apiKey) {
+        if (!apiKeyList.contains(apiKey)) {
+            apiKeyList.add(apiKey);
+        }
+    }
 
-	public void removeApiKey(String apiKey) {
-		if (apiKeyList.contains(apiKey)) {
-			apiKeyList.remove(apiKey);
-		}
-	}
+    public void removeApiKey(String apiKey) {
+        if (apiKeyList.contains(apiKey)) {
+            apiKeyList.remove(apiKey);
+        }
+    }
 }
